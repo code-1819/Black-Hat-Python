@@ -22,6 +22,9 @@ This script demonstrates a basic TCP server. It creates a socket object, binds i
 - ***netcat.py***:
 This script implements a basic Netcat-like tool in Python. It provides functionalities for connecting to a target host and port, listening for incoming connections, executing commands on the target, uploading files to the target, and interacting with a command shell. The script utilizes the `socket`, `subprocess`, and `threading` modules for network communication and command execution. It accepts various command-line arguments to specify the mode of operation, target IP address, port, and additional options such as command execution, file upload, and command shell interaction.
 
+- ***proxy.py***:
+This script is a lightweight Python script for creating a simple TCP proxy server. It allows users to intercept and modify network traffic between a client and a remote server. The script supports packet inspection, modification, and forwarding, providing a flexible tool for network debugging, monitoring, and security testing.
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
