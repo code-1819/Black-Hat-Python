@@ -2,9 +2,11 @@ import sys
 import socket
 import threading
 
+# Filter for non-printable characters in hexdump
 HEX_FILTER = ''.join(
     [(len(repr(chr(i))) == 3) and chr(i) or '.' for i in range(256)])
 
+# Function to display hexdump of data
 def hexdump(src, length=16, show=True):
     if isinstance(src, bytes):
         src = src.decode()
@@ -23,7 +25,7 @@ def hexdump(src, length=16, show=True):
         else:
             return results
 
-
+# Function to receive data from a connection
 def receive_from(connection):
     buffer = b""
     connection.settimeout(5)
@@ -37,17 +39,16 @@ def receive_from(connection):
         pass
     return buffer
 
-
+# Placeholder functions for packet modifications
 def request_handler(buffer):
     # perform packet modifications
     return buffer
-
 
 def response_handler(buffer):
     # perform packet modifications
     return buffer
 
-
+# Function to handle proxying of data between client and remote server
 def proxy_handler(client_socket, remote_host, remote_port, receive_first):
     remote_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     remote_socket.connect((remote_host, remote_port))
@@ -87,35 +88,33 @@ def proxy_handler(client_socket, remote_host, remote_port, receive_first):
             print("[*] No more data. Closing connections. ")
             break
 
-
-def server_loop(
-        local_host, local_port, remote_host, remote_port, receive_first):
+# Function to listen for incoming connections and start proxy threads
+def server_loop(local_host, local_port, remote_host, remote_port, receive_first):
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         server.bind((local_host, local_port))
     except Exception as e:
         print('problem on bind: %r' % e)
-
         print("[!!] Failed to listen on %s:%d" % (local_host, local_port))
-        print("[!!] Check for other listening sockets or corrects permissions.")
+        print("[!!] Check for other listening sockets or correct permissions.")
         sys.exit(0)
 
     print("[*] Listening on %s:%d" % (local_host, local_port))
     server.listen(5)
     while True:
         client_socket, addr = server.accept()
-        # print out the local connection information
+        # Print out the local connection information
         line = "> Received incoming connection from %s:%d" % (addr[0], addr[1])
         print(line)
 
-        # start a thread to talk to the remote host
+        # Start a thread to talk to the remote host
         proxy_thread = threading.Thread(
             target=proxy_handler,
             args=(client_socket, remote_host,
                   remote_port, receive_first))
         proxy_thread.start()
 
-
+# Main function to parse command line arguments and start the server loop
 def main():
     if len(sys.argv[1:]) != 5:
         print("Usage: ./proxy.py [localhost] [localport]", end='')
@@ -138,7 +137,5 @@ def main():
     server_loop(local_host, local_port,
                 remote_host, remote_port, receive_first)
 
-
 if __name__ == "__main__":
     main()
-
